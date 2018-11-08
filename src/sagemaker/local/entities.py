@@ -47,22 +47,23 @@ class _LocalTrainingJob(object):
         self.end_time = None
 
     def start(self, input_data_config, output_data_config, hyperparameters, job_name):
-        for channel in input_data_config:
-            if channel['DataSource'] and 'S3DataSource' in channel['DataSource']:
-                data_distribution = channel['DataSource']['S3DataSource']['S3DataDistributionType']
-                data_uri = channel['DataSource']['S3DataSource']['S3Uri']
-            elif channel['DataSource'] and 'FileDataSource' in channel['DataSource']:
-                data_distribution = channel['DataSource']['FileDataSource']['FileDataDistributionType']
-                data_uri = channel['DataSource']['FileDataSource']['FileUri']
-            else:
-                raise ValueError('Need channel[\'DataSource\'] to have [\'S3DataSource\'] or [\'FileDataSource\']')
+        if input_data_config:
+            for channel in input_data_config:
+                if channel['DataSource'] and 'S3DataSource' in channel['DataSource']:
+                    data_distribution = channel['DataSource']['S3DataSource']['S3DataDistributionType']
+                    data_uri = channel['DataSource']['S3DataSource']['S3Uri']
+                elif channel['DataSource'] and 'FileDataSource' in channel['DataSource']:
+                    data_distribution = channel['DataSource']['FileDataSource']['FileDataDistributionType']
+                    data_uri = channel['DataSource']['FileDataSource']['FileUri']
+                else:
+                    raise ValueError('Need channel[\'DataSource\'] to have [\'S3DataSource\'] or [\'FileDataSource\']')
 
-            # use a single Data URI - this makes handling S3 and File Data easier down the stack
-            channel['DataUri'] = data_uri
+                # use a single Data URI - this makes handling S3 and File Data easier down the stack
+                channel['DataUri'] = data_uri
 
-            if data_distribution != 'FullyReplicated':
-                raise RuntimeError('DataDistribution: %s is not currently supported in Local Mode' %
-                                   data_distribution)
+                if data_distribution != 'FullyReplicated':
+                    raise RuntimeError('DataDistribution: %s is not currently supported in Local Mode' %
+                                       data_distribution)
 
         self.start = datetime.datetime.now()
         self.state = self._TRAINING

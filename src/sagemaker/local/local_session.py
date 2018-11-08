@@ -53,8 +53,8 @@ class LocalSagemakerClient(object):
         """
         self.sagemaker_session = sagemaker_session or LocalSession()
 
-    def create_training_job(self, TrainingJobName, AlgorithmSpecification, InputDataConfig, OutputDataConfig,
-                            ResourceConfig, **kwargs):
+    def create_training_job(self, TrainingJobName, AlgorithmSpecification, OutputDataConfig,
+                            ResourceConfig, InputDataConfig=None, **kwargs):
         """
         Create a training job in Local Mode
         Args:

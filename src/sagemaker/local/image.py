@@ -262,15 +262,17 @@ class _SageMakerContainer(object):
             'hosts': self.hosts
         }
 
-        print(input_data_config)
         json_input_data_config = {}
-        for c in input_data_config:
-            channel_name = c['ChannelName']
-            json_input_data_config[channel_name] = {
-                'TrainingInputMode': 'File'
-            }
-            if 'ContentType' in c:
-                json_input_data_config[channel_name]['ContentType'] = c['ContentType']
+        if input_data_config:
+            print(input_data_config)
+
+            for c in input_data_config:
+                channel_name = c['ChannelName']
+                json_input_data_config[channel_name] = {
+                    'TrainingInputMode': 'File'
+                }
+                if 'ContentType' in c:
+                    json_input_data_config[channel_name]['ContentType'] = c['ContentType']
 
         _write_json_file(os.path.join(config_path, 'hyperparameters.json'), hyperparameters)
         _write_json_file(os.path.join(config_path, 'resourceconfig.json'), resource_config)
@@ -285,14 +287,16 @@ class _SageMakerContainer(object):
         # Set up the channels for the containers. For local data we will
         # mount the local directory to the container. For S3 Data we will download the S3 data
         # first.
-        for channel in input_data_config:
-            uri = channel['DataUri']
-            channel_name = channel['ChannelName']
-            channel_dir = os.path.join(data_dir, channel_name)
-            os.mkdir(channel_dir)
 
-            data_source = sagemaker.local.data.get_data_source_instance(uri, self.sagemaker_session)
-            volumes.append(_Volume(data_source.get_root_dir(), channel=channel_name))
+        if input_data_config:
+            for channel in input_data_config:
+                uri = channel['DataUri']
+                channel_name = channel['ChannelName']
+                channel_dir = os.path.join(data_dir, channel_name)
+                os.mkdir(channel_dir)
+
+                data_source = sagemaker.local.data.get_data_source_instance(uri, self.sagemaker_session)
+                volumes.append(_Volume(data_source.get_root_dir(), channel=channel_name))
 
         # If there is a training script directory and it is a local directory,
         #  mount it to the container.
