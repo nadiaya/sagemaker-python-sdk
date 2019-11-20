@@ -43,7 +43,7 @@ required_packages = [
     "fabric>=2.0",
 ]
 
-# Specific use case dependencies.
+# Specific use case dependencies
 extras = {
     "analytics": [
         "pandas",
@@ -54,7 +54,7 @@ extras = {
     ],
 
 }
-# Meta dependency groups.
+# Meta dependency groups
 extras['all'] = [item for group in extras.values() for item in group]
 # Tests specific dependencies (do not need to be included in 'all')
 extras['test'] = [
@@ -68,11 +68,9 @@ extras['test'] = [
      "tensorflow>=1.3.0",
      "contextlib2",
      "awslogs",
-     "pandas",
      "black==19.3b0 ; python_version >= '3.6'",
      "stopit==1.1.2",
      "apache-airflow==1.10.5",
-     "docker-compose>=1.23.0",
  ],
 
 # enum is introduced in Python 3.4. Installing enum back port
